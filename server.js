@@ -9,32 +9,28 @@ const packageRoutes = require("./routes/packageRoutes");
 
 const app = express();
 
-
 // Connect Database
 connectDB();
 
-
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: "https://sky-voyage-frontend.vercel.app",
+  credentials: true,
+}));
 
+app.use(express.json());
 
 // Test Route
 app.get("/", (req, res) => {
-    res.send("SkyVoyage Backend Running 🚀");
+  res.send("SkyVoyage Backend Running 🚀");
 });
 
-
-// User Routes
+// Routes
 app.use("/api/users", userRoutes);
-
-
-// Package Routes (baad ch enable karange)
- app.use("/api/packages", packageRoutes);
-
+app.use("/api/packages", packageRoutes);
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
