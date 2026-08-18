@@ -4,7 +4,9 @@ const express = require("express");
 const cors = require("cors");
 
 const connectDB = require("./db/db");
+
 const packageRoutes = require("./routes/packageRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
@@ -27,8 +29,6 @@ app.use("/api/packages", async (req, res, next) => {
     await connectDB();
     next();
   } catch (error) {
-    console.error("DB ERROR:", error.message);
-
     res.status(500).json({
       message: "Database connection failed",
       error: error.message
@@ -37,5 +37,20 @@ app.use("/api/packages", async (req, res, next) => {
 });
 
 app.use("/api/packages", packageRoutes);
+
+// 👇 USERS / AUTH ROUTES
+app.use("/api/users", async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({
+      message: "Database connection failed",
+      error: error.message
+    });
+  }
+});
+
+app.use("/api/users", userRoutes);
 
 module.exports = app;
