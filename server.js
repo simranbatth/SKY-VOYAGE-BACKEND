@@ -1,41 +1,19 @@
-require("dotenv").config();
-
-const express = require("express");
-const cors = require("cors");
-
-const connectDB = require("./db/db");
-const packageRoutes = require("./routes/packageRoutes");
-
-const app = express();
-
-app.use(cors({
-  origin: [
-    "https://sky-voyage-frontend.vercel.app",
-    "http://localhost:5173"
-  ],
-  credentials: true,
-}));
-
-app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("SkyVoyage Backend Running 🚀");
-});
-
-// Connect MongoDB before package routes
-app.use("/api/packages", async (req, res, next) => {
+app.get("/api/debug-db", async (req, res) => {
   try {
     await connectDB();
-    next();
-  } catch (error) {
-    console.error("Database connection failed:", error.message);
 
+    const Package = require("./model/Package");
+
+    const packages = await Package.find();
+
+    res.json({
+      database: Package.db.name,
+      collection: Package.collection.name,
+      count: packages.length
+    });
+  } catch (error) {
     res.status(500).json({
-      message: "Database connection failed",
+      error: error.message
     });
   }
 });
-
-app.use("/api/packages", packageRoutes);
-
-module.exports = app;
